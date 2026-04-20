@@ -1,9 +1,52 @@
-# 製品X Small RAG Bot 作業記録（2026-02-24 / 更新: 2026-04-10）
+# 製品X Small RAG Bot 作業記録（2026-02-24 / 更新: 2026-04-20）
 
 > この文書の役割: Status / Changelog（実施履歴・既知課題・次アクション）
 >
 > 仕様の正本は `../README.md`、設計原則は `rag_architecture_guide.md`、
 > 学習手順は `hands_on_rag_flow.md` を参照。
+
+## 追記サマリ（2026-04-20）
+
+### pytest テストスイートの整備（75テスト）
+
+デモデータ（ITヘルプデスク）への全面差し替えに合わせ、`tests/` ディレクトリに pytest ベースの自動テストを新規作成。
+
+#### テストファイル一覧
+
+| ファイル | テスト数 | カバー範囲 |
+|----------|---------|-----------|
+| `tests/test_data_integrity.py` | 19 | chunks.jsonl 整合性、chunk ファイル、eval CSV、プロンプトファイル |
+| `tests/test_build_jsonl.py` | 21 | `scripts/rag_build_jsonl.py` の各関数（front matter パース、見出し分割、文字数分割、チャンクID、JSONL変換） |
+| `tests/test_app_unit.py` | 33 | `app.py` のロジック（SimpleBM25、minmax正規化、検索テキスト構築、トークナイズ、同義語展開、ヘルパー関数、インデックスロード、retrieve_topk） |
+| `tests/test_retrieval_quality.py` | 3 | `eval_tuning.csv`（85問）を使った検索品質テスト（hybrid/tfidf/bm25 の Recall@5） |
+
+#### 実行結果
+
+```
+75 passed in 5.12s
+```
+
+#### デモデータ差し替え
+
+| 項目 | Before | After |
+|------|--------|-------|
+| チャンクファイル | 製品X固有データ（21ファイル） | ITヘルプデスクデモデータ（36ファイル） |
+| chunks.jsonl | 244レコード | 213レコード |
+| eval_sample.csv | 製品X向け質問 | ITヘルプデスク向け3問 |
+| eval_tuning.csv | 80問（製品X） | 85問（ITヘルプデスク） |
+| ドメイン | 製造業向け生産管理 | 汎用ITヘルプデスク |
+
+#### 新規追加ファイル
+
+| ファイル | 役割 |
+|----------|------|
+| `tests/__init__.py` | テストパッケージ初期化 |
+| `tests/test_data_integrity.py` | データ整合性テスト（19テスト） |
+| `tests/test_build_jsonl.py` | JSONLビルド処理ユニットテスト（21テスト） |
+| `tests/test_app_unit.py` | app.py ロジックテスト（33テスト） |
+| `tests/test_retrieval_quality.py` | 検索品質テスト（3テスト） |
+
+---
 
 ## 追記サマリ（2026-04-10）
 

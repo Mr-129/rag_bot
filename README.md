@@ -48,6 +48,11 @@
 - `scripts/_test_app.py`: アプリケーション機能テスト
 - `scripts/_test_rerank.py`: Rerank統合テスト（9項目）
 - `scripts/_eval_rerank_fast.py`: Rerank付き検索精度の高速評価（LLM不要）
+- `tests/`: pytest テストスイート（75テスト）
+  - `test_data_integrity.py`: データ整合性（chunks.jsonl / chunkファイル / eval CSV / プロンプト）
+  - `test_build_jsonl.py`: JSONLビルド処理のユニットテスト
+  - `test_app_unit.py`: app.py のロジックテスト（BM25 / TF-IDF / ハイブリッド検索）
+  - `test_retrieval_quality.py`: 検索品質テスト（Recall@5）
 - `data/prompts/`: 外部化されたシステムプロンプト（6ファイル）
 - `data/synonyms.json`: 外部化された同義語辞書（7グループ）
 - `data/llm_config.json`: LLM接続設定（プロバイダ切り替え用）
@@ -60,6 +65,14 @@
 - **該当ファイル**: `app.py`, `scripts/rag_build_jsonl.py`, `scripts/rag_retrieve.py`, ルートの互換ラッパー (`rag_build_jsonl.py`, `rag_retrieve.py`)。
 - **内容**: BM25用トークナイザやスコア計算など重要関数にdocstringを追加。ルートラッパーには "互換性ラッパー" の説明を追記しました。
 
+
+## テスト
+
+```powershell
+python -m pytest tests/ -v
+```
+
+75テスト（データ整合性 19 + JSONLビルド 21 + appロジック 33 + 検索品質 3）。検索品質テストは `data/eval_tuning.csv`（85問）を使用。
 
 ## 前提
 
