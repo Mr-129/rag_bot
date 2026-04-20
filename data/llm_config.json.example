@@ -1,0 +1,8 @@
+{
+  "base_url": "http://localhost:11434/v1",
+  "api_key": "<REDACTED or set via LLM_API_KEY env var>",
+  "model": "gemma3:4b",
+  "embedding_model": "bge-m3",
+  "temperature": 0.2,
+  "timeout": 300
+}

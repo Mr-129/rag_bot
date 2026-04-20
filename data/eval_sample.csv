@@ -1,0 +1,4 @@
+id,question,expected_source_path
+q1,VPN接続がタイムアウトして繋がらないのですが,data/chunk/VPN接続トラブル.md
+q2,パスワードを忘れてログインできません,data/chunk/パスワードリセット手順.md
+q3,Outlookでメールの送受信ができません,data/chunk/Outlookメール設定.md

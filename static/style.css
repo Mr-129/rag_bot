@@ -1,0 +1,289 @@
+:root {
+  /* アプリ全体で使う色の変数（ここを変えると配色を一括変更できる） */
+  --bg: #f7f7f8;
+  --surface: #ffffff;
+  --text: #111827;
+  --muted: #6b7280;
+  --border: #e5e7eb;
+  --assistant: #ffffff;
+  --user: #ecfeff;
+  --error: #fef2f2;
+  --accent: #2563eb;
+}
+
+* {
+  /* padding / border を含めたサイズ計算に統一（レイアウト崩れを防ぐ） */
+  box-sizing: border-box;
+}
+
+html,
+body {
+  /* 画面の高さいっぱいを使う */
+  height: 100dvh;
+}
+
+body {
+  /* body自体のスクロールは止め、チャット欄のみスクロールさせる */
+  margin: 0;
+  overflow: hidden;
+  background: var(--bg);
+  color: var(--text);
+  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans JP", Arial, "Apple Color Emoji", "Segoe UI Emoji";
+}
+
+.app-shell {
+  /* 上:ヘッダー / 中:チャット / 下:入力欄 の3段グリッド */
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  height: 100dvh;
+  min-height: 100dvh;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+}
+
+.topbar {
+  /* 上部バー。常に上に表示される */
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 16px;
+  background: rgba(247, 247, 248, 0.95);
+  backdrop-filter: blur(6px);
+  border-bottom: 1px solid var(--border);
+}
+
+h1 {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.hint {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.settings summary {
+  list-style: none;
+  cursor: pointer;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  padding: 8px 12px;
+  border-radius: 10px;
+  font-size: 13px;
+  user-select: none;
+}
+
+.settings summary::-webkit-details-marker {
+  display: none;
+}
+
+.settings-panel {
+  /* 設定ボタンを開いたときの小パネル */
+  margin-top: 8px;
+  width: 260px;
+  padding: 12px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  border-radius: 12px;
+  display: grid;
+  gap: 10px;
+  box-shadow: 0 10px 30px rgba(17, 24, 39, 0.08);
+}
+
+.chat {
+  /* チャット表示欄（中央の可変領域） */
+  /* min-height:0 は CSS Grid 内でスクロールを正しく効かせるために重要 */
+  overflow: auto;
+  height: 100%;
+  padding: 20px 16px 24px;
+  min-height: 0;
+}
+
+.msg {
+  /* 1メッセージの吹き出し */
+  width: fit-content;
+  max-width: min(80ch, 90%);
+  margin: 0 0 12px;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--assistant);
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.msg.user {
+  /* ユーザー発言は右寄せ */
+  margin-left: auto;
+  background: var(--user);
+}
+
+.msg.error {
+  /* エラーメッセージは赤系背景で強調 */
+  background: var(--error);
+  border-color: #fecaca;
+}
+
+.role {
+  font-size: 11px;
+  color: var(--muted);
+  margin-bottom: 5px;
+}
+
+.content {
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.content a {
+  color: var(--accent);
+}
+
+.content pre {
+  margin: 8px 0;
+  padding: 10px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: #f9fafb;
+  overflow: auto;
+}
+
+.content code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Courier New", monospace;
+}
+
+.content :not(pre) > code {
+  padding: 0.1em 0.35em;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: #f9fafb;
+}
+
+.content ul,
+.content ol {
+  margin: 8px 0 8px 20px;
+}
+
+.composer-wrap {
+  /* 入力欄エリア（最下段） */
+  /* safe-area-inset-bottom はスマホの下部余白対策 */
+  position: relative;
+  padding: 10px 16px max(14px, env(safe-area-inset-bottom));
+  border-top: 1px solid var(--border);
+  background: rgba(247, 247, 248, 0.96);
+  backdrop-filter: blur(6px);
+}
+
+textarea {
+  /* メッセージ入力欄 */
+  width: 100%;
+  resize: none;
+  min-height: 56px;
+  max-height: 220px;
+  border: 1px solid #d1d5db;
+  border-radius: 12px;
+  padding: 11px 12px;
+  font: inherit;
+  color: var(--text);
+  background: var(--surface);
+  outline: none;
+}
+
+textarea:focus,
+input[type="text"]:focus,
+input[type="number"]:focus,
+select:focus {
+  border-color: #93c5fd;
+  box-shadow: 0 0 0 3px rgba(147, 197, 253, 0.35);
+}
+
+.composer-actions {
+  /* 送信ボタンとステータス表示の横並び */
+  margin-top: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.status {
+  font-size: 12px;
+  color: var(--muted);
+  min-height: 18px;
+}
+
+label {
+  font-size: 12px;
+  color: var(--muted);
+  display: grid;
+  gap: 6px;
+}
+
+label.inline {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+input[type="text"],
+input[type="number"],
+select {
+  /* 設定パネル内の入力共通スタイル */
+  width: 100%;
+  border: 1px solid #d1d5db;
+  border-radius: 10px;
+  padding: 8px 10px;
+  background: var(--surface);
+  color: var(--text);
+  outline: none;
+}
+
+input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+}
+
+button {
+  /* ボタン共通スタイル */
+  border: 1px solid #bfdbfe;
+  background: #eff6ff;
+  color: #1e3a8a;
+  border-radius: 10px;
+  padding: 9px 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+button#send {
+  min-width: 90px;
+}
+
+button:hover {
+  background: #dbeafe;
+}
+
+button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+@media (max-width: 680px) {
+  /* 小さい画面向けの微調整 */
+  .app-shell {
+    max-width: 100%;
+  }
+
+  .msg {
+    max-width: 95%;
+  }
+
+  .settings-panel {
+    width: min(88vw, 300px);
+  }
+}

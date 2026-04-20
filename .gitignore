@@ -1,0 +1,43 @@
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+.Python
+
+# Local settings and secrets
+data/llm_config.json
+.env
+
+# Byte-compiled / cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Logs
+Log/
+*.log
+
+# Masking script (contains pre-mask data)
+_mask_data.py
+
+# Old evaluation outputs (stale)
+eval_output.txt
+eval_results.csv
+eval_tuning_results.csv
+
+# Embeddings (large, environment-specific)
+data/embeddings_bge_m3.json
+data/_deprecated_embeddings_nomic.json
+
+# Distribution / build
+build/
+dist/
+*.egg-info/
+
+# Editor / OS
+.vscode/
+.idea/
+*.swp
+Thumbs.db
+.DS_Store

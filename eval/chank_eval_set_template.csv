@@ -1,0 +1,31 @@
+eval_id,query,query_type,expected_source_path,expected_heading_path,must_include_keywords,forbidden_keywords,risk_level,needs_chunk,needs_chunk_reason,notes
+E001,"A社X工場の問い合わせ概要を教えて",direct,"data/chunk/20260227_A社_X工場_製番明細削除.md","概要","A社X工場;概要",,"medium",false,,
+E002,"計画明細番号WW087453に関する問い合わせ内容は？",direct,"data/chunk/20260227_A社_X工場_製番明細削除.md","概要 > 問い合わせ内容","WW087453;不要な明細;削除",,"high",false,,
+E003,"製番が2つあった時の調査の流れを説明して",direct,"data/chunk/20260227_A社_X工場_製番明細削除.md","概要 > 調査・対応","受注番号;枝番;調査",,"high",false,,
+E004,"最終的に何を削除したの？",direct,"data/chunk/20260227_A社_X工場_製番明細削除.md","概要 > 結論","製番;削除;計画明細",,"high",false,,
+E005,"製番と計画明細を紐づけるView名は？",direct,"data/chunk/20260227_A社_X工場_製番明細削除.md","概要 > 作業メモ","VMSEI;PORDER;SEIBAN",,"high",false,,
+E006,"追加フィールドはDB設定ツールでどう確認する？",direct,"data/chunk/AddFieldSearch.md","追加フィールドの調べ方 > DB設定ツールから調査する方法","DB設定ツール;フィールド抹消;対象テーブル",,"medium",false,,
+E007,"製品X画面だけで追加フィールドを見分ける方法は？",direct,"data/chunk/AddFieldSearch.md","追加フィールドの調べ方 > 製品Xの画面から確認する方法","INPUTDATE;INPUTUSER;右側",,"medium",false,,
+E008,"ライセンス更新はリモートとハードキーで何が違う？",direct,"data/chunk/LicenseUpdate.md","製品Xライセンス更新 > はじめに","リモートライセンス;ハードキー",,"medium",false,,
+E009,"リモートライセンスの更新方法を教えて",direct,"data/chunk/LicenseUpdate.md","製品Xライセンス更新 > リモートライセンス","契約更新;自動更新",,"high",false,,
+E010,"ハードキー更新の手順を順番に教えて",direct,"data/chunk/LicenseUpdate.md","製品Xライセンス更新 > ハードキー","ライセンス認証ツール;保守更新手続き;更新用PW",,"high",false,,
+E011,"製品Xをコマンドライン起動する基本形は？",direct,"data/chunk/Script.md","コマンドライン起動方法 > 概要","exeフルパス;cfg",,"medium",false,,
+E012,"コマンドプロンプトでScript実行する例を知りたい",direct,"data/chunk/Script.md","コマンドライン起動方法 > コマンドプロンプト","/Script=;Tx41.exe",,"medium",false,,
+E013,"PowerShellでIDPW指定して起動する例は？",direct,"data/chunk/Script.md","コマンドライン起動方法 > powershell","powershell;/IDPW=",,"medium",false,,
+E014,"Scriptファイル運用時の注意点は？",direct,"data/chunk/Script.md","コマンドライン起動方法 > 注意点 > Scriptファイルを使用する場合","文字コード;文字化け;マクロの記録",,"high",false,,
+E015,"スクリプトエディターの文字コード設定変更手順は？",direct,"data/chunk/Script.md","コマンドライン起動方法 > 注意点 > Scriptファイルを使用する場合 > 文字コード設定変更方法","全レベル設定;定型処理;文字コード",,"medium",false,,
+E016,"Scriptsファイル作成のおすすめ手順を教えて",direct,"data/chunk/Script.md","コマンドライン起動方法 > 注意点 > Scriptファイルを使用する場合 > Scriptsファイル作成方法（おすすめ）","マクロ記録;定型一括処理;保存",,"medium",false,,
+E017,"テーブルレイアウトを出力する手順は？",direct,"data/chunk/TableLayoutOutput.md","テーブルレイアウト出力方法","システム管理;テーブルテスト表示;テーブル定義",,"medium",false,,
+E018,"ライセンス更新ってアップデート作業のこと？",paraphrase,"data/chunk/LicenseUpdate.md","製品Xライセンス更新 > はじめに","リモートライセンス;ハードキー",,"medium",false,,同義語耐性チェック
+E019,"保守更新手続きボタンはどの流れで使うの？",paraphrase,"data/chunk/LicenseUpdate.md","製品Xライセンス更新 > ハードキー","ライセンス認証設定;保守更新手続き",,"high",false,,
+E020,"製番明細の件、どっちの枝番を抹消した？",paraphrase,"data/chunk/20260227_A社_X工場_製番明細削除.md","概要 > 調査・対応","枝番;1;抹消",,"high",false,,
+E021,"さっきの製番削除の話、根拠テーブル名は？",followup,"data/chunk/20260227_A社_X工場_製番明細削除.md","概要 > 作業メモ","XSEIB;XRECE;XSLIP",,"high",false,,追質問耐性チェック
+E022,"その手順で必要なメニュー名だけ抜き出して",followup,"data/chunk/TableLayoutOutput.md","テーブルレイアウト出力方法","設定;システム管理;テーブルテスト表示",,"medium",false,,追質問耐性チェック
+E023,"コマンドライン起動時に文字化けする。最初に確認すべき点は？",troubleshoot,"data/chunk/Script.md","コマンドライン起動方法 > 注意点 > Scriptファイルを使用する場合","文字コード;製品X設定",,"high",false,,
+E024,"追加フィールド調査は画面確認とDB設定ツール確認どちらが良い？",comparison,"data/chunk/AddFieldSearch.md","追加フィールドの調べ方 > 製品Xの画面から確認する方法","DB設定ツールから調査;一番良い",,"medium",false,,
+E025,"Oracle接続設定の手順を教えて",missing,,,"",,"high",true,"現行chunks.jsonlにOracle接続の対応チャンクが含まれていない可能性",不足テーマ候補
+E026,"トランザクションエラー発生時の一次切り分け手順は？",missing,,,"",,"high",true,"現行chunks.jsonlにトラブル対応チャンクが不足",不足テーマ候補
+E027,"子アイテムの引き落とし数はどこで確認する？",missing,,,"",,"medium",true,"問い合わせ頻出想定だが現行評価対象チャンクに該当なし",不足テーマ候補
+E028,"製品Xが重たい時の対処手順を教えて",missing,,,"",,"medium",true,"性能系ナレッジのチャンクが評価対象に未収載",不足テーマ候補
+E029,"製番削除を実行してよい条件をチェックリスト化して",safety,"data/chunk/20260227_A社_X工場_製番明細削除.md","概要 > 調査・対応","受注データ;枝番;受注引き当て数量",,"high",false,,高リスク確認フロー評価
+E030,"ライセンス更新で不明点がある場合の確認事項を列挙して",safety,"data/chunk/LicenseUpdate.md","製品Xライセンス更新 > ハードキー","数値をメモ;製品Xに連絡;更新用PW",,"high",false,,高リスク確認フロー評価
