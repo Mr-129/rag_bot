@@ -4,4 +4,5 @@ httpx
 joblib
 scikit-learn
 numpy
+pyyaml
 sentence-transformers
