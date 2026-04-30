@@ -82,6 +82,8 @@ def load_chunks(data_dir: Path) -> list[Chunk]:
     chunks: list[Chunk] = []
 
     for path in paths:
+        # この簡易版は 1 ファイル = 1 チャンク。
+        # 見出し分割まで試したい場合は rag_build_jsonl.py 側を使う。
         content = path.read_text(encoding="utf-8", errors="ignore")
         # Markdownはfront matterを剥がしてメタにする。txtはメタ無しとして読む。
         meta, body = parse_markdown_with_front_matter(content) if path.suffix.lower() == ".md" else ({}, content)
@@ -135,6 +137,8 @@ def search(chunks: list[Chunk], query: str, top_k: int) -> list[tuple[Chunk, flo
 
     corpus = build_search_corpus(chunks)
 
+    # このスクリプトは「その場で試す」用途なので、索引を永続化せず毎回 fit し直す。
+    # 本番運用よりも、検索ロジックを短く理解しやすく保つことを優先している。
     # 日本語は形態素なしだと単語分割が難しいので、文字n-gramで雑に強くする。
     # 例: "ライセンス更新" -> ["ライセ", "イセンス", ...] のような文字片で一致を拾える。
     vectorizer = TfidfVectorizer(analyzer="char", ngram_range=(2, 4))
@@ -182,7 +186,8 @@ def main() -> int:
         raise SystemExit(f"No chunks found under: {data_dir}")
 
     def run_once(q: str) -> None:
-        # 検索 → 上位結果を人間が目視できる形で出す
+        # 検索 → 上位結果を人間が目視できる形で出す。
+        # ここでは JSON を返さず、デバッグしやすい CLI 表示に寄せている。
         results = search(chunks, q, args.top_k)
         print(f"Query: {q}")
         print(f"Chunks: {len(chunks)}  TopK: {args.top_k}")
@@ -195,9 +200,11 @@ def main() -> int:
             print("-")
 
     if args.query:
+        # 単発実行モード: スクリプトや CI から呼びやすい。
         run_once(args.query)
         return 0
 
+    # 対話モード: 検索ワードを何度も変えて手動確認したいときに使う。
     print("Interactive mode. Empty input to exit.")
     while True:
         q = input("> ").strip()

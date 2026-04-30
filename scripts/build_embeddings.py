@@ -23,6 +23,8 @@ def build_search_text(rec: dict) -> str:
         tags_text = " ".join(str(t) for t in tags)
     else:
         tags_text = str(tags) if tags else ""
+    # app.py 側の検索テキストと同じ並びを使う。
+    # ここがずれると、事前計算した embedding と実行時の検索文脈が噛み合わなくなる。
     return "\n".join(
         [
             f"title: {rec.get('title', '')}",
@@ -36,6 +38,8 @@ def build_search_text(rec: dict) -> str:
 
 def get_embedding(text: str, model: str, ollama_url: str) -> list[float]:
     """Ollama /api/embed エンドポイントでEmbeddingベクトルを取得する。"""
+    # このスクリプトは 1 チャンクずつ API を呼ぶシンプルな作りにしている。
+    # 速度最適化より、失敗箇所が追いやすいことを優先したオフライン前処理ツール。
     resp = httpx.post(
         f"{ollama_url}/api/embed",
         json={"model": model, "input": text},
@@ -51,6 +55,13 @@ def get_embedding(text: str, model: str, ollama_url: str) -> list[float]:
 
 
 def main() -> int:
+    """CLIエントリーポイント。
+
+    処理の流れ:
+    1) chunks.jsonl を読み込む
+    2) 各チャンクを embedding API へ送る
+    3) chunk_id と embedding の対応表を JSON で保存する
+    """
     parser = argparse.ArgumentParser(description="Build embedding vectors for chunks")
     parser.add_argument("--chunks", default="data/chunks.jsonl")
     parser.add_argument("--out", default="data/embeddings.json")
@@ -68,6 +79,7 @@ def main() -> int:
         for line in f:
             line = line.strip()
             if line:
+                # JSONL は「1行 = 1 JSON」なので、空行を除いてそのまま積む。
                 records.append(json.loads(line))
 
     print(f"Loaded {len(records)} chunks from {chunks_path}")
@@ -84,6 +96,8 @@ def main() -> int:
         try:
             vec = get_embedding(text, args.model, args.ollama_url)
         except Exception as e:
+            # 一部失敗しても全体を止めず、最後まで作れるところだけ作る。
+            # どの chunk_id が失敗したかを後で追えるようログへ出す。
             print(f"  [{i+1}/{len(records)}] FAILED chunk_id={chunk_id}: {e}")
             continue
 
@@ -92,12 +106,15 @@ def main() -> int:
             "embedding": vec,
         })
 
+        # 長い前処理でも進捗が見えるよう、10件ごとに経過を表示する。
         if (i + 1) % 10 == 0 or (i + 1) == len(records):
             elapsed = time.time() - start
             print(f"  [{i+1}/{len(records)}] {elapsed:.1f}s elapsed, dim={len(vec)}")
 
     out_path = Path(args.out)
     with out_path.open("w", encoding="utf-8") as f:
+        # 出力は JSONL ではなく 1 個の JSON。
+        # モデル名や件数も持たせて、読み込む側が整合性を確認しやすくする。
         json.dump({"model": args.model, "count": len(embeddings), "embeddings": embeddings}, f, ensure_ascii=False)
 
     elapsed = time.time() - start

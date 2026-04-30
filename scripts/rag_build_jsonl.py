@@ -88,6 +88,7 @@ def split_markdown_by_headings(body: str) -> list[tuple[str, str]]:
     in_fenced_code = False
 
     def flush() -> None:
+        # Flush means "close the current heading section and save it if it has body text".
         text = "\n".join(current_lines).strip()
         if not text:
             return
@@ -100,6 +101,8 @@ def split_markdown_by_headings(body: str) -> list[tuple[str, str]]:
 
     for line in lines:
         stripped = line.strip()
+        # Toggle fenced-code mode so lines like "# not-a-heading" inside code blocks
+        # do not split the document unexpectedly.
         if stripped.startswith("```") or stripped.startswith("~~~"):
             in_fenced_code = not in_fenced_code
 
@@ -110,6 +113,8 @@ def split_markdown_by_headings(body: str) -> list[tuple[str, str]]:
 
             level = len(match.group(1))
             title = match.group(2).strip()
+            # heading_stack keeps the current heading breadcrumb.
+            # Example: H2 -> H3 becomes "概要 > 実行例".
             heading_stack = heading_stack[: level - 1]
             heading_stack.append(title)
             current_heading_path = " > ".join(heading_stack)
@@ -148,6 +153,8 @@ def split_text_by_limit(text: str, max_chars: int, overlap: int = 0) -> list[str
     current = ""
 
     def push_hard_split(long_text: str) -> None:
+        # Last-resort splitter for a single paragraph that is still too long.
+        # Prefer a newline boundary, and only then fall back to a hard character cut.
         rest = long_text.strip()
         while len(rest) > max_chars:
             cut = rest.rfind("\n", 0, max_chars + 1)
@@ -172,6 +179,7 @@ def split_text_by_limit(text: str, max_chars: int, overlap: int = 0) -> list[str
             current = paragraph
             continue
 
+        # Try to keep neighboring paragraphs together before starting a new chunk.
         candidate = f"{current}\n\n{paragraph}"
         if len(candidate) <= max_chars:
             current = candidate
@@ -211,6 +219,7 @@ def load_chunks(data_dir: Path, max_chars: int = DEFAULT_MAX_CHARS, overlap: int
     chunks: list[Chunk] = []
 
     for path in paths:
+        # Read each file once, then fan out into heading-based chunks.
         content = path.read_text(encoding="utf-8", errors="ignore")
         if path.suffix.lower() == ".md":
             meta, body = parse_markdown_with_front_matter(content)
@@ -222,6 +231,7 @@ def load_chunks(data_dir: Path, max_chars: int = DEFAULT_MAX_CHARS, overlap: int
 
         chunk_index = 1
         for heading_path, section_text in units:
+            # chunk_index is file-local: it restarts from 1 for each source document.
             for split_text in split_text_by_limit(section_text, max_chars=max_chars, overlap=overlap):
                 chunks.append(
                     Chunk(
@@ -247,6 +257,8 @@ def stable_chunk_id(chunk: Chunk) -> str:
 
 def to_json_record(chunk: Chunk) -> dict[str, Any]:
     """ChunkをJSONL出力用dictへ変換する。"""
+    # Front matter allows both a single tag string and a YAML list.
+    # Normalize early so downstream code can always assume a list.
     tags = chunk.meta.get("tags") if "tags" in chunk.meta else []
     if isinstance(tags, str):
         tags = [tags]
@@ -261,6 +273,7 @@ def to_json_record(chunk: Chunk) -> dict[str, Any]:
     else:
         related_ids = []
 
+    # Keep the JSON schema small and explicit. Optional metadata is appended later.
     record: dict[str, Any] = {
         "chunk_id": stable_chunk_id(chunk),
         "title": chunk.title,
@@ -317,6 +330,9 @@ def main() -> int:
     if args.overlap < 0:
         raise SystemExit("--overlap must be >= 0")
 
+    # 1. Load and split source files.
+    # 2. Convert each chunk into one JSON object per line.
+    # 3. Write the result as UTF-8 JSONL for downstream retrieval scripts.
     chunks = load_chunks(data_dir, max_chars=args.max_chars, overlap=args.overlap)
     if not chunks:
         raise SystemExit(f"No chunks found under: {data_dir}")

@@ -1,3 +1,9 @@
+// このファイルは「チャット画面のふるまい」をまとめて担当する。
+// 主な責務は 3 つだけ:
+// 1. 画面入力の収集
+// 2. /api/chat/stream との通信
+// 3. 受け取った回答と根拠の描画
+
 // 画面上の主要要素を取得（このID名は index.html と対応）
 const chatEl = document.getElementById('chat');
 const msgEl = document.getElementById('message');
@@ -18,7 +24,8 @@ const statusEl = document.getElementById('status');
 // 「履歴をクリア」ボタンで画面と履歴を同時リセットする。
 let conversationHistory = [];
 
-// LLM設定をサーバーから取得してデフォルトモデル名を設定
+// 起動時にサーバー設定から既定モデル名を取得する。
+// これにより、UI 側へモデル名をハードコードせずに済む。
 fetch('/api/llm-config')
   .then(r => r.json())
   .then(cfg => { if (cfg.model && modelEl) modelEl.value = cfg.model; })
